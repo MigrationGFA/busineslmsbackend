@@ -17,9 +17,8 @@ class App extends BaseConfig
      * E.g., http://example.com/
      */
     
-    // public string $baseURL = 'http://localhost/rbb-php/';
-    public string $baseURL = 'https://rbbphpremsana.azurewebsites.net/';
-    // public string $baseURL = 'https://rbbphpremsana-test.azurewebsites.net/';
+    
+    public string $baseURL = 'https://busineslmsbackend-test.azurewebsites.net/';
 
     /**
      * Allowed Hostnames in the Site URL other than the hostname in the baseURL.
@@ -32,7 +31,7 @@ class App extends BaseConfig
      *
      * @var list<string>
      */
-    public array $allowedHostnames = ['rbbphpremsana.azurewebsites.net', 'rbbphpremsana-test.azurewebsites.net', 'rbb-php.remsana.com'];
+    public array $allowedHostnames = ['busineslmsbackend-test.azurewebsites.net'];
 
     /**
      * --------------------------------------------------------------------------
