@@ -8,26 +8,18 @@ class CohortSeeder extends Seeder
 {
     public function run()
     {
+        // Seeders bypass the model's auto-slug hook, so slug is typed manually here.
         $data = [
             [
-                'slug'           => 'lagos-cohort-1',
-                'state'          => 'Lagos',
-                'logo_url'       => '/assets/logos/lagos.png',
-                'primary_color'  => '#1A73E8',
-                'brochure_path'  => 'brochures/lagos.pdf',
-                'price'          => 50000.00,
-                'status'         => 'open',
-                'created_at'     => date('Y-m-d H:i:s'),
-            ],
-            [
-                'slug'           => 'abuja-cohort-1',
-                'state'          => 'Abuja',
-                'logo_url'       => '/assets/logos/abuja.png',
-                'primary_color'  => '#34A853',
-                'brochure_path'  => 'brochures/abuja.pdf',
-                'price'          => 50000.00,
-                'status'         => 'draft',
-                'created_at'     => date('Y-m-d H:i:s'),
+                'cohort'        => 1,
+                'slug'          => 'ogun-cohort-1',
+                'state'         => 'ogun',
+                'logo_url'      => '/assets/logos/ogun.png',
+                'primary_color' => '#E63946',
+                'brochure_path' => 'brochures/ogun.pdf',
+                'price'         => 50000.00,
+                'status'        => 'open',
+                'created_at'    => date('Y-m-d H:i:s'),
             ],
         ];
 

@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Database\Migrations;
-
 use CodeIgniter\Database\Migration;
 
-class CreateRegistrantsTable extends Migration
+class CreateUsersTable extends Migration
 {
     public function up()
     {
@@ -20,36 +18,32 @@ class CreateRegistrantsTable extends Migration
                 'constraint' => 11,
                 'unsigned'   => true,
             ],
-            'type' => [
-                'type'       => 'ENUM',
-                'constraint' => ['registration', 'brochure'],
-                'default'    => 'registration',
+            'full_name' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 150,
             ],
-            // shared field across both forms
             'email' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 150,
             ],
-            // fields below only filled for type = registration
-            'full_name' => [
-                'type'       => 'VARCHAR',
-                'constraint' => 150,
-                'null'       => true,
-            ],
             'company_name' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 150,
-                'null'       => true,
             ],
             'job_title' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 100,
+            ],
+            'password' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 255,
                 'null'       => true,
+                'comment'    => 'Set later when login is introduced',
             ],
             'payment_status' => [
                 'type'       => 'ENUM',
                 'constraint' => ['pending', 'paid', 'failed'],
-                'null'       => true,
+                'default'    => 'pending',
             ],
             'payment_reference' => [
                 'type'       => 'VARCHAR',
@@ -63,13 +57,14 @@ class CreateRegistrantsTable extends Migration
         ]);
 
         $this->forge->addKey('id', true);
+        $this->forge->addUniqueKey('email');
         $this->forge->addKey('cohort_id');
         $this->forge->addForeignKey('cohort_id', 'cohorts', 'id', '', 'CASCADE');
-        $this->forge->createTable('registrants');
+        $this->forge->createTable('users');
     }
 
     public function down()
     {
-        $this->forge->dropTable('registrants');
+        $this->forge->dropTable('users');
     }
 }

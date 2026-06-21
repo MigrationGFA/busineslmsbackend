@@ -1,9 +1,6 @@
 <?php
 
-namespace App\Database\Migrations;
-
 use CodeIgniter\Database\Migration;
-
 
 class CreateCohortsTable extends Migration
 {
@@ -16,13 +13,20 @@ class CreateCohortsTable extends Migration
                 'unsigned'       => true,
                 'auto_increment' => true,
             ],
+            'cohort' => [
+                'type'       => 'INT',
+                'constraint' => 5,
+                'comment'    => 'Cohort number, e.g. 1, 2, 3',
+            ],
             'slug' => [
                 'type'       => 'VARCHAR',
-                'constraint' => 100,
+                'constraint' => 160,
+                'comment'    => 'Internal reference, e.g. ogun-1. Not used in the public URL.',
             ],
             'state' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 100,
+                'comment'    => 'Used in the public URL, e.g. /apply/ogun',
             ],
             'logo_url' => [
                 'type'       => 'VARCHAR',
@@ -57,6 +61,7 @@ class CreateCohortsTable extends Migration
 
         $this->forge->addKey('id', true);
         $this->forge->addUniqueKey('slug');
+        $this->forge->addKey('state');
         $this->forge->createTable('cohorts');
     }
 

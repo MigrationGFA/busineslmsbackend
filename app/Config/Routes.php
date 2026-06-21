@@ -20,17 +20,16 @@ $routes->get('/', 'Home::index');
 
 // Add inside app/Config/Routes.php
 
-$routes->group('api', function ($routes) {
+$routes->group('api', ['namespace' => 'App\Controllers\Api'], function($routes) {
 
-    // Landing page reads cohort branding/price by slug
-    $routes->get('cohorts/(:segment)', 'Api\CohortController::show/$1');
+    // Landing page: GET /api/apply/ogun -> finds the currently open cohort for Ogun
+    $routes->get('apply/(:segment)', 'CohortController::showByState/$1');
 
     // Paid registration form
-    $routes->post('cohorts/(:segment)/register', 'Api\RegistrationController::store/$1');
+    $routes->post('apply/(:segment)/register', 'UserController::store/$1');
 
     // Brochure email capture
-    $routes->post('cohorts/(:segment)/brochure', 'Api\BrochureController::send/$1');
+    $routes->post('apply/(:segment)/brochure', 'BrochureController::send/$1');
 
 });
-
 

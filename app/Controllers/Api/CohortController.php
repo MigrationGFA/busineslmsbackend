@@ -10,22 +10,23 @@ class CohortController extends BaseController
 {
     use ResponseTrait;
 
-    public function show(string $slug)
+    /**
+     * GET /api/apply/{state}
+     * Frontend calls this with whatever state is in the URL.
+     * We find whichever cohort is currently open for that state.
+     */
+    public function showByState(string $state)
     {
         $model  = new CohortModel();
-        $cohort = $model->findBySlug($slug);
+        $cohort = $model->findOpenByState($state);
 
         if (! $cohort) {
-            return $this->failNotFound('Cohort not found.');
-        }
-
-        if ($cohort['status'] !== 'open') {
-            return $this->fail('Registration is not currently open for this cohort.', 403);
+            return $this->failNotFound('No open registration for this state right now.');
         }
 
         // Only expose what the frontend needs to render/theme the page
         return $this->respond([
-            'slug'          => $cohort['slug'],
+            'cohort'        => $cohort['cohort'],
             'state'         => $cohort['state'],
             'logo_url'      => $cohort['logo_url'],
             'primary_color' => $cohort['primary_color'],

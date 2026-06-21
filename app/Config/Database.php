@@ -29,7 +29,7 @@ class Database extends Config
         'hostname'     => 'dimpmysql.mysql.database.azure.com',
         'username'     => 'dimpified',
         'password'     => '-jWxNJlsW6qC75NuC@2]',
-        'database'     => 'remsana_core',
+        'database'     => 'aibo',
         'DBDriver'     => 'MySQLi',
         'DBPrefix'     => '',
         'pConnect'     => false,

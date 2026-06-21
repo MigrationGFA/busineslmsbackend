@@ -4,43 +4,47 @@ namespace App\Controllers\Api;
 
 use App\Controllers\BaseController;
 use App\Models\CohortModel;
-use App\Models\RegistrantModel;
+use App\Models\BrochureRequestModel;
 use CodeIgniter\API\ResponseTrait;
-use Config\Services;
 
 class BrochureController extends BaseController
 {
     use ResponseTrait;
 
-    public function send(string $slug)
+    /**
+     * POST /api/apply/{state}/brochure
+     * Expects a JSON body, e.g.: { "email": "..." }
+     */
+    public function send(string $state)
     {
         $cohortModel = new CohortModel();
-        $cohort      = $cohortModel->findBySlug($slug);
+        $cohort      = $cohortModel->findOpenByState($state);
 
         if (! $cohort) {
-            return $this->failNotFound('Cohort not found.');
+            return $this->failNotFound('No open registration for this state right now.');
         }
 
         if (empty($cohort['brochure_path'])) {
             return $this->fail('No brochure available for this cohort yet.', 404);
         }
 
-        if (! $this->validate(['email' => 'required|valid_email'])) {
+        $input = $this->request->getJSON(true) ?? [];
+
+        if (! $this->validateData($input, ['email' => 'required|valid_email'])) {
             return $this->fail($this->validator->getErrors(), 422);
         }
 
-        $email = $this->request->getPost('email');
+        $email = $input['email'];
 
-        $registrantModel = new RegistrantModel();
+        $brochureModel = new BrochureRequestModel();
 
-        // Log the lead even if they request the brochure more than once;
-        // only block exact duplicate logging, still resend the email.
-        $existing = $registrantModel->findByEmailAndCohort($email, $cohort['id'], 'brochure');
+        // Log the lead even on repeat requests; only block duplicate
+        // logging, the email itself still gets resent below.
+        $existing = $brochureModel->findByEmailAndCohort($email, $cohort['id']);
 
         if (! $existing) {
-            $registrantModel->insert([
+            $brochureModel->insert([
                 'cohort_id'  => $cohort['id'],
-                'type'       => 'brochure',
                 'email'      => $email,
                 'created_at' => date('Y-m-d H:i:s'),
             ]);
@@ -57,22 +61,16 @@ class BrochureController extends BaseController
 
     private function sendBrochureEmail(string $toEmail, array $cohort): bool
     {
-        $emailService = Services::email();
+        $brochureUrl = rtrim(base_url(), '/') . '/' . ltrim($cohort['brochure_path'], '/');
 
-        $brochureFullPath = WRITEPATH . '../public/' . $cohort['brochure_path'];
+        $subject = 'Your Brochure - ' . $cohort['state'] . ' Cohort';
 
-        $emailService->setTo($toEmail);
-        $emailService->setFrom('no-reply@yourdomain.com', 'Your Program Name');
-        $emailService->setSubject('Your Brochure - ' . $cohort['state'] . ' Cohort');
-        $emailService->setMessage(
-            "Hi,\n\nThanks for your interest in the {$cohort['state']} cohort. "
-            . "Your brochure is attached to this email.\n\nBest regards."
-        );
+        $message = "Hi,<br><br>"
+            . "Thanks for your interest in the {$cohort['state']} cohort.<br>"
+            . "You can download your brochure here: "
+            . "<a href=\"{$brochureUrl}\">{$brochureUrl}</a><br><br>"
+            . "Best regards.";
 
-        if (file_exists($brochureFullPath)) {
-            $emailService->attach($brochureFullPath);
-        }
-
-        return $emailService->send();
+        return send_email_via_api($toEmail, $subject, $message);
     }
 }
