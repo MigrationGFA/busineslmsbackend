@@ -19,7 +19,7 @@ class App extends BaseConfig
     
     
     // public string $baseURL = 'http://localhost/aibo/';
-    public string $baseURL = 'https://busineslmsbackend-test.azurewebsites.net/';
+    public string $baseURL = 'https://businesslmsback.azurewebsites.net/';
 
     /**
      * Allowed Hostnames in the Site URL other than the hostname in the baseURL.

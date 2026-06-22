@@ -38,7 +38,7 @@ class Cors extends BaseConfig
         'allowedOrigins' => [
             'http://localhost:5173',
             'http://localhost:5174',
-            'https://businesslms-test.azurewebsites.net/',
+            'https://businesslms-test.azurewebsites.net',
             'https://aibo.remsana.com',
         ],
  
