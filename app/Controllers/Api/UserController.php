@@ -72,7 +72,7 @@ class UserController extends BaseController
             // still stands — we just log it rather than fail the whole
             // request, since the applicant shouldn't see an error for
             // something that already succeeded.
-            $this->sendConfirmationEmail($input['full_name'], $email, $input['company_name'], $input['job_title'], $cohort['cohort']);
+            $this->sendConfirmationEmail($input['full_name'], $email);
 
             // Payment initialization (Paystack/Flutterwave) happens here.
             return $this->respondCreated([
