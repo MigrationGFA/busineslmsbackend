@@ -92,7 +92,7 @@ class UserController extends BaseController
 
             // Logo lives in CI4's public/ folder, so base_url() builds the
             // correct working link automatically, same pattern as the brochure file.
-            $logoUrl = rtrim(base_url(), '/') . '/assets/RemsanaLogoBlue.png';
+            $logoUrl = rtrim(base_url(), '/') . '/public/assets/RemsanaLogoBlue.png';
 
             $message = "<div style=\"text-align:center; margin-bottom:24px;\">"
                 . "<img src=\"{$logoUrl}\" alt=\"Remsana\" style=\"max-width:180px; height:auto;\">"

@@ -78,10 +78,10 @@ class BrochureController extends BaseController
     private function sendBrochureEmail(string $toEmail, array $cohort): bool
     {
         try {
-            $brochureUrl = rtrim(base_url(), '/') . '/' . ltrim($cohort['brochure_path'], '/');
+            $brochureUrl = rtrim(base_url(), '/') . '/public/' . ltrim($cohort['brochure_path'], '/');
 
             $subject = 'Your Brochure - ' . $cohort['state'] . ' Cohort';
-            $logoUrl = rtrim(base_url(), '/') . '/assets/RemsanaLogoBlue.png';
+            $logoUrl = rtrim(base_url(), '/') . '/public/assets/RemsanaLogoBlue.png';
 
             $message = "<div style=\"text-align:center; margin-bottom:24px;\">"
                 . "<img src=\"{$logoUrl}\" alt=\"Remsana\" style=\"max-width:180px; height:auto;\">"
