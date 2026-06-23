@@ -6,10 +6,12 @@ use App\Controllers\BaseController;
 use App\Models\CohortModel;
 use App\Models\BrochureRequestModel;
 use CodeIgniter\API\ResponseTrait;
+use Throwable;
 
 class BrochureController extends BaseController
 {
     use ResponseTrait;
+    use CallsSmtpApi;
 
     /**
      * POST /api/apply/{state}/brochure
@@ -17,60 +19,84 @@ class BrochureController extends BaseController
      */
     public function send(string $state)
     {
-        $cohortModel = new CohortModel();
-        $cohort      = $cohortModel->findOpenByState($state);
+        try {
+            $cohortModel = new CohortModel();
+            $cohort      = $cohortModel->findOpenByState($state);
 
-        if (! $cohort) {
-            return $this->failNotFound('No open registration for this state right now.');
+            if (! $cohort) {
+                return $this->failNotFound('Brochure is not available right now. Please check back soon.');
+            }
+
+            if (empty($cohort['brochure_path'])) {
+                return $this->fail('Brochure is not available right now. Please check back soon.', 404);
+            }
+
+            $input = $this->request->getJSON(true);
+
+            if (! is_array($input)) {
+                return $this->fail('Something went wrong with your submission. Please try again.', 400);
+            }
+
+            if (! $this->validateData($input, ['email' => 'required|valid_email'])) {
+                return $this->fail('Please enter a valid email address.', 422);
+            }
+
+            $email = $input['email'];
+
+            $brochureModel = new BrochureRequestModel();
+
+            // Log the lead even on repeat requests; only block duplicate
+            // logging, the email itself still gets resent below.
+            $existing = $brochureModel->findByEmailAndCohort($email, $cohort['id']);
+
+            if (! $existing) {
+                $inserted = $brochureModel->insert([
+                    'cohort_id'  => $cohort['id'],
+                    'email'      => $email,
+                    'created_at' => date('Y-m-d H:i:s'),
+                ]);
+
+                if (! $inserted) {
+                    log_message('error', 'BrochureController::send - failed to log brochure request for ' . $email);
+                }
+            }
+
+            $sent = $this->sendBrochureEmail($email, $cohort);
+
+            if (! $sent) {
+                return $this->fail('Could not send the brochure. Please try again shortly.', 500);
+            }
+
+            return $this->respond(['message' => 'Brochure sent! Please check your email.']);
+        } catch (Throwable $e) {
+            log_message('error', 'BrochureController::send - ' . $e->getMessage());
+
+            return $this->fail('Something went wrong. Please try again shortly.', 500);
         }
-
-        if (empty($cohort['brochure_path'])) {
-            return $this->fail('No brochure available for this cohort yet.', 404);
-        }
-
-        $input = $this->request->getJSON(true) ?? [];
-
-        if (! $this->validateData($input, ['email' => 'required|valid_email'])) {
-            return $this->fail($this->validator->getErrors(), 422);
-        }
-
-        $email = $input['email'];
-
-        $brochureModel = new BrochureRequestModel();
-
-        // Log the lead even on repeat requests; only block duplicate
-        // logging, the email itself still gets resent below.
-        $existing = $brochureModel->findByEmailAndCohort($email, $cohort['id']);
-
-        if (! $existing) {
-            $brochureModel->insert([
-                'cohort_id'  => $cohort['id'],
-                'email'      => $email,
-                'created_at' => date('Y-m-d H:i:s'),
-            ]);
-        }
-
-        $sent = $this->sendBrochureEmail($email, $cohort);
-
-        if (! $sent) {
-            return $this->fail('Could not send the brochure email. Please try again.', 500);
-        }
-
-        return $this->respond(['message' => 'Brochure sent to your email.']);
     }
 
     private function sendBrochureEmail(string $toEmail, array $cohort): bool
     {
-        $brochureUrl = rtrim(base_url(), '/') . '/' . ltrim($cohort['brochure_path'], '/');
+        try {
+            $brochureUrl = rtrim(base_url(), '/') . '/' . ltrim($cohort['brochure_path'], '/');
 
-        $subject = 'Your Brochure - ' . $cohort['state'] . ' Cohort';
+            $subject = 'Your Brochure - ' . $cohort['state'] . ' Cohort';
+            $logoUrl = rtrim(base_url(), '/') . '/assets/RemsanaLogoBlue.png';
 
-        $message = "Hi,<br><br>"
-            . "Thanks for your interest in the {$cohort['state']} cohort.<br>"
-            . "You can download your brochure here: "
-            . "<a href=\"{$brochureUrl}\">{$brochureUrl}</a><br><br>"
-            . "Best regards.";
+            $message = "<div style=\"text-align:center; margin-bottom:24px;\">"
+                . "<img src=\"{$logoUrl}\" alt=\"Remsana\" style=\"max-width:180px; height:auto;\">"
+                . "</div>"
+                . "Hi,<br><br>"
+                . "Thanks for your interest in the program.<br>"
+                . "You can download your brochure here: "
+                . "<a href=\"{$brochureUrl}\">{$brochureUrl}</a><br><br>"
+                . "Best regards.";
 
-        return send_email_via_api($toEmail, $subject, $message);
+            return $this->callSmtpApi($toEmail, $subject, $message);
+        } catch (Throwable $e) {
+            log_message('error', 'BrochureController::sendBrochureEmail - ' . $e->getMessage());
+
+            return false;
+        }
     }
 }

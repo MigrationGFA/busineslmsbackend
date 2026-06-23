@@ -1,10 +1,16 @@
 <?php
 
-if (!function_exists('send_email_via_api')) {
-    function send_email_via_api(string $to, string $subject, string $message): bool
+namespace App\Controllers\Api;
+
+trait CallsSmtpApi
+{
+    /**
+     * Calls the existing gfa-tech.com/smtp email API directly.
+     * Same 4 parameters used elsewhere: recipient_email, subject, fromName, message.
+     */
+    private function callSmtpApi(string $to, string $subject, string $message, string $fromName = 'REMSANA'): bool
     {
-        $apiUrl   = 'https://gfa-tech.com/smtp/';
-        $fromName = 'REMSANA';
+        $apiUrl = getenv('email.api.url') ?: 'https://gfa-tech.com/smtp/';
 
         $payload = json_encode([
             'recipient_email' => $to,
@@ -28,14 +34,15 @@ if (!function_exists('send_email_via_api')) {
         $response  = curl_exec($ch);
         $httpCode  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $curlError = curl_error($ch);
+        curl_close($ch);
 
         if ($curlError) {
-            log_message('error', 'Email API curl error: ' . $curlError);
+            log_message('error', static::class . '::callSmtpApi - curl error: ' . $curlError);
             return false;
         }
 
         if ($httpCode < 200 || $httpCode >= 300) {
-            log_message('error', 'Email API failed [' . $httpCode . ']: ' . $response);
+            log_message('error', static::class . '::callSmtpApi - failed [' . $httpCode . ']: ' . $response);
             return false;
         }
 
