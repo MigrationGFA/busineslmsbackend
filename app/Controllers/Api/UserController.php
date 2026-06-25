@@ -35,10 +35,11 @@ class UserController extends BaseController
             }
 
             $rules = [
-                'full_name'    => 'required|min_length[3]|max_length[150]',
-                'email'        => 'required|valid_email',
-                'company_name' => 'required|max_length[150]',
-                'job_title'    => 'required|max_length[100]',
+                'full_name'     => 'required|min_length[3]|max_length[150]',
+                'email'         => 'required|valid_email',
+                'company_name'  => 'required|max_length[150]',
+                'job_title'     => 'required|max_length[100]',
+                'hear_about_us' => 'required|max_length[200]',
             ];
 
             if (! $this->validateData($input, $rules)) {
@@ -60,6 +61,7 @@ class UserController extends BaseController
                 'email'          => $email,
                 'company_name'   => $input['company_name'],
                 'job_title'      => $input['job_title'],
+                'hear_about_us'  => $input['hear_about_us'],
                 'payment_status' => 'pending',
                 'created_at'     => date('Y-m-d H:i:s'),
             ]);
@@ -72,7 +74,7 @@ class UserController extends BaseController
             // still stands — we just log it rather than fail the whole
             // request, since the applicant shouldn't see an error for
             // something that already succeeded.
-            $this->sendConfirmationEmail($input['full_name'], $email);
+            $this->sendConfirmationEmail($input['full_name'], $email, $input['company_name'], $input['job_title'], $cohort['cohort']);
 
             // Payment initialization (Paystack/Flutterwave) happens here.
             return $this->respondCreated([
@@ -85,14 +87,14 @@ class UserController extends BaseController
         }
     }
 
-    private function sendConfirmationEmail(string $fullName, string $email): void
+    private function sendConfirmationEmail(string $fullName, string $email, string $companyName, string $jobTitle, int $cohortNumber): void
     {
         try {
             $subject = 'Your Application to the Remsana AI for Founders & Business Owners Programme';
 
             // Logo lives in CI4's public/ folder, so base_url() builds the
             // correct working link automatically, same pattern as the brochure file.
-            $logoUrl = rtrim(base_url(), '/') . '/public/assets/RemsanaLogoBlue.png';
+            $logoUrl = rtrim(base_url(), '/') . '/assets/RemsanaLogoBlue.png';
 
             $message = "<div style=\"text-align:center; margin-bottom:24px;\">"
                 . "<img src=\"{$logoUrl}\" alt=\"Remsana\" style=\"max-width:180px; height:auto;\">"

@@ -31,5 +31,8 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function($routes) 
     // Brochure email capture
     $routes->post('apply/(:segment)/brochure', 'BrochureController::send/$1');
 
+    // Page view / click tracking
+    $routes->post('events/page-view', 'PageViewEventController::store');
+
 });
 
