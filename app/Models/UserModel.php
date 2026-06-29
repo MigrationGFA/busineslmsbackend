@@ -18,6 +18,7 @@ class UserModel extends Model
         'company_name',
         'job_title',
         'hear_about_us',
+        'phone_number',
         'password',
         'payment_status',
         'payment_reference',
