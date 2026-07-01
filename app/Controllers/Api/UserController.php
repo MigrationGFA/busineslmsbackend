@@ -80,7 +80,7 @@ class UserController extends BaseController
 
             // Payment initialization (Paystack/Flutterwave) happens here.
             return $this->respondCreated([
-                'message' => 'Your application is received. Thanks for applying! Please check your email — our team will review your application and reach out to you shortly.',
+                'message' => 'Your application is received. Thanks for applying! Please check your email. Our team will review your application and reach out to you shortly. In the meantime, book your strategy session by clicking the button below.',
             ]);
         } catch (Throwable $e) {
             log_message('error', 'UserController::store - ' . $e->getMessage());
