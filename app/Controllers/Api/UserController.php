@@ -41,6 +41,7 @@ class UserController extends BaseController
                 'job_title'     => 'required|max_length[100]',
                 'hear_about_us' => 'required|max_length[200]',
                 'phone_number'  => 'required|min_length[7]|max_length[20]',
+                'version'       => 'permit_empty|max_length[20]',
             ];
 
             if (! $this->validateData($input, $rules)) {
@@ -64,6 +65,7 @@ class UserController extends BaseController
                 'job_title'      => $input['job_title'],
                 'hear_about_us'  => $input['hear_about_us'],
                 'phone_number'   => $input['phone_number'],
+                'version'        => $input['version'] ?? null,
                 'payment_status' => 'pending',
                 'created_at'     => date('Y-m-d H:i:s'),
             ]);

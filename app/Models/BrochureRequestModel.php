@@ -14,6 +14,7 @@ class BrochureRequestModel extends Model
     protected $allowedFields = [
         'cohort_id',
         'email',
+        'phone_number',
         'created_at',
     ];
 

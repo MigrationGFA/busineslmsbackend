@@ -41,6 +41,10 @@ class BrochureController extends BaseController
                 return $this->fail('Please enter a valid email address.', 422);
             }
 
+            if (! $this->validateData($input, ['phone_number' => 'required|min_length[7]|max_length[20]'])) {
+                return $this->fail('Please enter a valid phone number.', 422);
+            }
+
             $email = $input['email'];
 
             $brochureModel = new BrochureRequestModel();
@@ -53,6 +57,7 @@ class BrochureController extends BaseController
                 $inserted = $brochureModel->insert([
                     'cohort_id'  => $cohort['id'],
                     'email'      => $email,
+                    'phone_number'   => $input['phone_number'],
                     'created_at' => date('Y-m-d H:i:s'),
                 ]);
 
