@@ -16,7 +16,6 @@ class AddFullNameToBrochureTable extends Migration
         ]);
     }
 
-    
     public function down()
     {
         $this->forge->dropColumn('brochure_requests', 'full_name');
