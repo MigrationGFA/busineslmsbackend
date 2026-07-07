@@ -50,7 +50,7 @@ class BrochureController extends BaseController
             }
 
             $email = $input['email'];
-
+            $fullName = $input['full_name'];
             $brochureModel = new BrochureRequestModel();
 
             // Log the lead even on repeat requests; only block duplicate
@@ -62,7 +62,7 @@ class BrochureController extends BaseController
                     'cohort_id'  => $cohort['id'],
                     'email'      => $email,
                     'phone_number'   => $input['phone_number'],
-                    'full_name'   => $input['full_name'],
+                    'full_name'   => $fullName,
                     'created_at' => date('Y-m-d H:i:s'),
                 ]);
 
@@ -71,7 +71,7 @@ class BrochureController extends BaseController
                 }
             }
 
-            $sent = $this->sendBrochureEmail($email, $cohort);
+            $sent = $this->sendBrochureEmail($email, $cohort, $fullName);
 
             if (! $sent) {
                 return $this->fail('Could not send the brochure. Please try again shortly.', 500);
@@ -85,7 +85,7 @@ class BrochureController extends BaseController
         }
     }
 
-    private function sendBrochureEmail(string $toEmail, array $cohort): bool
+    private function sendBrochureEmail(string $toEmail, array $cohort, string $fullName): bool
     {
         try {
             $brochureUrl = rtrim(base_url(), '/') . '/public/' . ltrim($cohort['brochure_path'], '/');
@@ -96,7 +96,7 @@ class BrochureController extends BaseController
             $message = "<div style=\"text-align:center; margin-bottom:24px;\">"
                 . "<img src=\"{$logoUrl}\" alt=\"Remsana\" style=\"max-width:180px; height:auto;\">"
                 . "</div>"
-                . "Hi,<br><br>"
+                . "Hi {$fullName},<br><br>"
                 . "Thanks for your interest in the program.<br>"
                 . "You can download your brochure here: "
                 . "<a href=\"{$brochureUrl}\">{$brochureUrl}</a><br><br>"
