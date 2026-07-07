@@ -40,6 +40,7 @@ class Cors extends BaseConfig
             'http://localhost:5174',
             'https://businesslms-test.azurewebsites.net',
             'https://aibo.remsana.com',
+            'https://aibo2.remsana.com',
         ],
  
         /**
