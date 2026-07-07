@@ -41,6 +41,10 @@ class BrochureController extends BaseController
                 return $this->fail('Please enter a valid email address.', 422);
             }
 
+            if (! $this->validateData($input, ['full_name' => 'required|min_length[3]|max_length[150]'])) {
+                return $this->fail('Please enter a valid name with minimum of 3 characters.', 422);
+            }
+
             if (! $this->validateData($input, ['phone_number' => 'required|min_length[7]|max_length[20]'])) {
                 return $this->fail('Please enter a valid phone number.', 422);
             }
@@ -58,6 +62,7 @@ class BrochureController extends BaseController
                     'cohort_id'  => $cohort['id'],
                     'email'      => $email,
                     'phone_number'   => $input['phone_number'],
+                    'full_name'   => $input['full_name'],
                     'created_at' => date('Y-m-d H:i:s'),
                 ]);
 
