@@ -59,11 +59,12 @@ class BrochureController extends BaseController
 
             if (! $existing) {
                 $inserted = $brochureModel->insert([
-                    'cohort_id'  => $cohort['id'],
-                    'email'      => $email,
+                    'cohort_id'      => $cohort['id'],
+                    'email'          => $email,
                     'phone_number'   => $input['phone_number'],
-                    'full_name'   => $fullName,
-                    'created_at' => date('Y-m-d H:i:s'),
+                    'full_name'      => $fullName,
+                    'version'        => $input['version'] ?? null,
+                    'created_at'     => date('Y-m-d H:i:s'),
                 ]);
 
                 if (! $inserted) {

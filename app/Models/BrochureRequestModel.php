@@ -16,6 +16,7 @@ class BrochureRequestModel extends Model
         'email',
         'phone_number',
         'full_name',
+        'version',
         'created_at',
     ];
 
