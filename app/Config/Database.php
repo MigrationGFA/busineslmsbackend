@@ -28,7 +28,7 @@ class Database extends Config
         'DSN'          => '',
         'hostname'     => 'dimpmysql.mysql.database.azure.com',
         'username'     => 'dimpified',
-        'password'     => '-jWxNJlsW6qC75NuC@2]',
+        'password'     => '',
         'database'     => 'aibo',
         'DBDriver'     => 'MySQLi',
         'DBPrefix'     => '',
@@ -37,7 +37,11 @@ class Database extends Config
         'charset'      => 'utf8mb4',
         'DBCollat'     => 'utf8mb4_general_ci',
         'swapPre'      => '',
-        'encrypt'      => true,
+        'encrypt' => [
+                'ssl_ca'     => null, // ideally path to Azure's DigiCert Global Root CA
+                'ssl_verify' => false, // fine for now; true + ssl_ca for production hardening
+            ],
+        // 'encrypt'      => false,
         'compress'     => false,
         'strictOn'     => false,
         'failover'     => [],
