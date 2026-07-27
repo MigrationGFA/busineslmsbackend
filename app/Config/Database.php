@@ -38,8 +38,8 @@ class Database extends Config
         'DBCollat'     => 'utf8mb4_general_ci',
         'swapPre'      => '',
         'encrypt' => [
-                'ssl_ca'     => null, // ideally path to Azure's DigiCert Global Root CA
-                'ssl_verify' => false, // fine for now; true + ssl_ca for production hardening
+                'ssl_ca'     => null, 
+                'ssl_verify' => false, 
             ],
         // 'encrypt'      => false,
         'compress'     => false,

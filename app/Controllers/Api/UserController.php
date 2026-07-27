@@ -161,9 +161,9 @@ class UserController extends BaseController
                 . "<p><strong>Key Dates</strong></p>"
 
                 . "<p>"
-                . "Application Deadline: <strong>31st July 2026</strong><br>"
+                . "Application Deadline: <strong>28th August 2026</strong><br>"
                 . "Review &amp; Selection Period: <strong>Ongoing</strong><br>"
-                . "Programme Commencement: <strong>3rd August 2026</strong>"
+                . "Programme Commencement: <strong>31st August 2026</strong>"
                 . "</p>"
 
                 . "<p>Should you have any questions regarding your application, please feel free to contact us "
